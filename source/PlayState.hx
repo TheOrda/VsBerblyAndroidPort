@@ -1,7 +1,7 @@
 package;
 
 import openfl.Lib;
-import flixel.addons.display.FlxBackdrop;
+import flixe.addons.display.FlxBackdrop;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -85,14 +85,17 @@ class PlayState extends MusicBeatState
 		['Perfect!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
 	
+	#if (haxe >= "4.0.0")
 	public var modchartTweens:Map<String, FlxTween> = new Map();
 	public var modchartSprites:Map<String, ModchartSprite> = new Map();
 	public var modchartTimers:Map<String, FlxTimer> = new Map();
 	public var modchartSounds:Map<String, FlxSound> = new Map();
+	#else
 	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
 	public var modchartSprites:Map<String, ModchartSprite> = new Map<String, Dynamic>();
 	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
 	public var modchartSounds:Map<String, FlxSound> = new Map<String, FlxSound>();
+	#end
 
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
@@ -113,7 +116,7 @@ class PlayState extends MusicBeatState
 	public var GF_X:Float = 400;
 	public var GF_Y:Float = 130;
 	
-	public var songSpeed:Float = 0;
+	public static var songSpeed:Float = 0;
 	
 	public var boyfriendGroup:FlxSpriteGroup;
 	public var dadGroup:FlxSpriteGroup;
@@ -164,32 +167,25 @@ class PlayState extends MusicBeatState
 
 	private var timeBarBG:AttachedSprite;
 	public var timeBar:FlxBar;
-	
-	public var sicks:Int = 0;
-	public var goods:Int = 0;
-	public var bads:Int = 0;
-	public var shits:Int = 0;
 
 	private var generatedMusic:Bool = false;
 	public var endingSong:Bool = false;
 	private var startingSong:Bool = false;
 	private var updateTime:Bool = false;
-	public static var changedDifficulty:Bool = false;
 	public static var practiceMode:Bool = false;
 	public static var usedPractice:Bool = false;
 	public static var changedDifficulty:Bool = false;
 	public static var cpuControlled:Bool = false;
 	var runCutscene:Bool = false;
-	
-	//Gameplay settings
-	public var healthGain:Float = 1;
-	public var healthLoss:Float = 1;
-	public var instakillOnMiss:Bool = false;
-	public var cpuControlled:Bool = false;
-	public var practiceMode:Bool = false;
 
 	var botplaySine:Float = 0;
 	var botplayTxt:FlxText;
+	
+	//Snowgrave shit
+	public var endingCount:Float = 0;
+	var krisOn:Bool = false;
+	var snow:BGSprite;
+	var snowfall:BGSprite;
 
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
@@ -197,12 +193,6 @@ class PlayState extends MusicBeatState
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
-	
-  //Snowgrave Shit
-	public var endingCount:Float = 0;
-	var krisOn:Bool = false;
-	var snow:BGSprite;
-	var snowFall:BGSprite;
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
@@ -259,6 +249,10 @@ class PlayState extends MusicBeatState
 
 	public var inCutscene:Bool = false;
 	var songLength:Float = 0;
+	
+	//Berdly 
+	var battlebg:FlxBackdrop;
+	var birdbg:BGSprite;
 
 	#if desktop
 	// Discord RPC variables
@@ -281,21 +275,18 @@ class PlayState extends MusicBeatState
 	// Lua shit
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
 	public var introSoundsSuffix:String = '';
-	
-	// Berdly
-	var battlebg:FlxBackdrop;
-	var birdbg:BGSprite;
 
 	override public function create()
 	{
         #if MODS_ALLOWED
- 		Paths.destroyLoadedImages();
+ 		Paths.destroyLoadedImages(resetSpriteCache);
   		#end	
+		resetSpriteCache = false;
 
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
-
-	  // Gameplay settings
+			
+		// Gameplay settings
 		healthGain = ClientPrefs.getGameplaySetting('healthgain', 1);
 		healthLoss = ClientPrefs.getGameplaySetting('healthloss', 1);
 		instakillOnMiss = ClientPrefs.getGameplaySetting('instakill', false);
@@ -669,8 +660,7 @@ class PlayState extends MusicBeatState
 					bg.antialiasing = false;
 					add(bg);
 				}
-				
-	case 'alley': //mordecai week
+case 'alley': //mordecai week
 				snow = new BGSprite('birbBackground/SnowEffect', 0, 0, 0.9, 0.9);
 				snow.alpha = 0;
 				snowFall = new BGSprite('birbBackground/Snowgrave', -350, -420, 1, 1, ['Snow Loop'], true);
@@ -835,10 +825,10 @@ class PlayState extends MusicBeatState
 		timeTxt.borderSize = 2;
 		timeTxt.visible = showTime;
 		if(ClientPrefs.downScroll) timeTxt.y = FlxG.height - 44;
-
+		
 		if(ClientPrefs.timeBarType == 'Song Name')
 		{
-			timeTxt.text = SONG.song;
+		  timeTxt.text = SONG.song;
 		}
 		updateTime = showTime;
 
@@ -867,11 +857,11 @@ class PlayState extends MusicBeatState
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
 		add(grpNoteSplashes);
-
+		
 		if(ClientPrefs.timeBarType == 'Song Name')
 		{
-			timeTxt.size = 24;
-			timeTxt.y += 3;
+		  timeTxt.size = 24;
+		  timeTxt.y += 3;
 		}
 
 		var splash:NoteSplash = new NoteSplash(100, 100, 0);
@@ -951,20 +941,17 @@ class PlayState extends MusicBeatState
 		healthBar.scrollFactor.set();
 		// healthBar
 		healthBar.visible = !ClientPrefs.hideHud;
-		healthBar.alpha = ClientPrefs.healthBarAlpha;
 		add(healthBar);
 		healthBarBG.sprTracker = healthBar;
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
 		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.hideHud;
-		iconP1.alpha = ClientPrefs.healthBarAlpha;
 		add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.hideHud;
-		iconP2.alpha = ClientPrefs.healthBarAlpha;
 		add(iconP2);
 		reloadHealthBarColors();
 
@@ -1537,8 +1524,8 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.pause();
 			vocals.pause();
 		}
-
-		var hptext:FlxText;
+		
+	var hptext:FlxText;
 		hptext = new FlxText(healthBar.x - 57,healthBar.y -10,  "HP:", 32);
 		hptext.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		hptext.scrollFactor.set();
@@ -1565,8 +1552,7 @@ class PlayState extends MusicBeatState
 			{
 				FlxTween.tween(youtext, {alpha: 0}, 1, {ease: FlxEase.expoInOut});
 			});
-			
-			
+
 		// Song duration in a float, useful for the time left feature
 		songLength = FlxG.sound.music.length;
 		FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
@@ -1653,13 +1639,11 @@ class PlayState extends MusicBeatState
 					else
 						oldNote = null;
 
-	      var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
-				swagNote.mustPress = gottaHitNote;
-				swagNote.sustainLength = songNotes[2];
-				swagNote.noteType = songNotes[3];
-				if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = editors.ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
-				
-				swagNote.scrollFactor.set();
+					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+					swagNote.mustPress = gottaHitNote;
+					swagNote.sustainLength = songNotes[2];
+					swagNote.noteType = songNotes[3];
+					if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = editors.ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
 					
 					
 					if (section.gfSection){
@@ -3588,20 +3572,20 @@ class PlayState extends MusicBeatState
 				combo += 1;
 				if(combo > 9999) combo = 9999;
 			}
-			health += note.hitHealth;
+			health += note.hitHealth * healthGain;
 
 			if(!note.noAnimation) {
 				var daAlt = '';
 				if(note.noteType == 'Alt Animation') daAlt = '-alt';
 	
-				var animToPlay:String = singAnimation[Std.int(Math.abs(note.noteData))];
-				
+				var animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))];
+
 				if(note.noteType == 'Kris'){
 					gf.playAnim(animToPlay + daAlt, true);
 					gf.holdTimer = 0;
 					krisOn = true;
 					trace("Fuck you no Snowgrave ending!");
-				}else if (note.noteType == 'KrisBot'){
+				}else if (note.noteType == 'KrisBot'){ 
 					gf.playAnim(animToPlay + daAlt, true);
 					gf.holdTimer = 0;
 				}else if(note.noteType == 'Noelle'){
@@ -3616,8 +3600,6 @@ class PlayState extends MusicBeatState
 					boyfriend.playAnim(animToPlay + daAlt, true);
 					boyfriend.holdTimer = 0;
 				}
-
-				 
 
 				if(note.noteType == 'Hey!') {
 					if(boyfriend.animOffsets.exists('hey')) {
