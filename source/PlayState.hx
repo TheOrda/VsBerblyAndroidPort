@@ -3594,14 +3594,14 @@ class PlayState extends MusicBeatState
 				var daAlt = '';
 				if(note.noteType == 'Alt Animation') daAlt = '-alt';
 	
-				var animToPlay:String = singAnimation[Std.int(Math.abs(note.noteData))]
+				var animToPlay:String = singAnimation[Std.int(Math.abs(note.noteData))];
 				
 				if(note.noteType == 'Kris'){
 					gf.playAnim(animToPlay + daAlt, true);
 					gf.holdTimer = 0;
 					krisOn = true;
 					trace("Fuck you no Snowgrave ending!");
-				}else if (note.noteType == 'KrisBot'){ 
+				}else if (note.noteType == 'KrisBot'){
 					gf.playAnim(animToPlay + daAlt, true);
 					gf.holdTimer = 0;
 				}else if(note.noteType == 'Noelle'){
