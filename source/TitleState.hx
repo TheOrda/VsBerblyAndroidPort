@@ -254,7 +254,7 @@ class TitleState extends MusicBeatState
 		// bg.setGraphicSize(Std.int(bg.width * 0.6));
 		// bg.updateHitbox();
 
-		g2 = new FlxSprite(0,0);
+		bg2 = new FlxSprite(0,0);
 		bg2.loadGraphic("assets/images/TitleBG.png", false, 1280, 720);
 	//	bg2.screenCenter(X);
 		bg2.antialiasing = true;
