@@ -576,14 +576,10 @@ class TitleState extends MusicBeatState
 			sickBeats++;
 			switch (sickBeats)
 			{
-					#if PSYCH_WATERMARKS
+				case 1:
 					createCoolText(['Psych Engine by'], 15);
-					#else
-					createCoolText(['ninjamuffin99', 'phantomArcade', 'kawaisprite', 'evilsk8er']);
-					#end
 				// credTextShit.visible = true;
 				case 3:
-					#if PSYCH_WATERMARKS
 					addMoreText('Shadow Mario', 15);
 					addMoreText('RiverOaken', 15);
 					addMoreText('bb-panzu', 15);
@@ -598,7 +594,7 @@ class TitleState extends MusicBeatState
 				// credTextShit.text = 'In association \nwith';
 				// credTextShit.screenCenter();
 				case 5:
-					#if PSYCH_WATERMARKS
+				  #if PSYCH_WATERMARKS
 					createCoolText(['Not associated', 'with'], -40);
 					#else
 					createCoolText(['In association', 'with'], -40);
@@ -626,10 +622,10 @@ class TitleState extends MusicBeatState
 				// credTextShit.text = "Friday";
 				// credTextShit.screenCenter();
 				case 13:
-					addMoreText('Berdly ');
+					addMoreText('Berdly');
 				// credTextShit.visible = true;
 				case 14:
-					addMoreText('Quest ');
+					addMoreText('Quest');
 				// credTextShit.text += '\nNight';
 				case 15:
 					addMoreText('2'); // credTextShit.text += '\nFunkin';
