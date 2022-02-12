@@ -89,7 +89,6 @@ class PlayState extends MusicBeatState
 	public var modchartSprites:Map<String, ModchartSprite> = new Map();
 	public var modchartTimers:Map<String, FlxTimer> = new Map();
 	public var modchartSounds:Map<String, FlxSound> = new Map();
-	#else
 	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
 	public var modchartSprites:Map<String, ModchartSprite> = new Map<String, Dynamic>();
 	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
