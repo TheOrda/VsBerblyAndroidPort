@@ -583,9 +583,6 @@ class TitleState extends MusicBeatState
 					addMoreText('Shadow Mario', 15);
 					addMoreText('RiverOaken', 15);
 					addMoreText('bb-panzu', 15);
-					#else
-					addMoreText('present');
-					#end
 				// credTextShit.text += '\npresent...';
 				// credTextShit.addText();
 				case 4:
